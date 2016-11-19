@@ -180,3 +180,144 @@ void StrSolveTest_3() {
 	char str[] = " -155884";
 	cout << StrToInt(str) << endl;
 }
+/*
+ * 问题四：回文判断
+ *判断一个字串是否是回文？
+ */
+/*
+ * 同时从字符串头尾开始向中间扫描字串，如果所有字符都一样，那么这个字串就是一个回文。
+ * 采用这种方法的话，我们只需要维护头部和尾部两个扫描指针即可
+ * 时间复杂度：O(n)，空间复杂度：O(1)。
+ */
+bool Ispalindrome(char *str) {
+	if (str == NULL)
+		return false;
+	int length = strlen(str);
+	//cout << "length= " << length << endl;
+	int head = 0;
+	int tail = length - 1;
+	while (head <= tail) {
+		if (str[head] == str[tail]) {
+			head++;
+			tail--;
+		} else {
+			return false;
+		}
+	}
+	return true;
+}
+/*
+ * 先从中间开始、然后向两边扩展查看字符是否相等
+ *
+ */
+bool Ispalindrome2(char *str) {
+	if (str == NULL)
+		return false;
+	int length = strlen(str);
+	int mid;
+	int tohead;
+	int totail;
+	if (length % 2 == 0) {
+		mid = length / 2;
+		tohead = mid - 1;
+		totail = mid;
+	} else {
+		mid = (length - 1) / 2;
+		tohead = mid - 1;
+		totail = mid + 1;
+	}
+	while (tohead >= 0) {
+		if (str[tohead--] != str[totail++])
+			return false;
+	}
+	return true;
+}
+void StrSolveTest_4() {
+	char str[20];
+	cout << "input :" << endl;
+	while (cin >> str) {
+		if (str != NULL) {
+			cout << "ret = " << Ispalindrome2(str) << endl;
+		} else
+			cout << "redo " << endl;
+	}
+}
+/*
+ * 问题五：最长回文子串
+ *给定一个字符串，求它的最长回文子串的长度。
+ */
+/*
+ * 如果一段字符串是回文，那么以某个字符为中心的前缀和后缀都是相同的
+ * 可以枚举中心位置，然后再在该位置上用扩展法，记录并更新得到的最长的回文长度
+ */
+int LongestPalindrom(const char *str) {
+	if (str == NULL)
+		return 0;
+	int length = strlen(str);
+	int max = 0;
+	int c = 0;
+	for (int i = 0; i < length; i++) {
+		for (int j = 0; (i - j >= 0) && (i + j) < length; j++) {
+			if (str[i - j] != str[i + j])
+				break;
+			c = 2 * j + 1;
+		}
+		if (c > max)
+			max = c;
+		for (int j = 0; (i - j >= 0) && (i + j) < length; j++) {
+			if (str[i - j] != str[i + j + 1])
+				break;
+			c = 2 * j + 2;
+		}
+		if (c > max)
+			max = c;
+	}
+	return max;
+}
+/*
+ * Manacher算法，且这个算法求最长回文子串的时间复杂度是线性O(N)的。
+ */
+int LongestPalindrom2(const char *str) {
+
+}
+void StrSolveTest_5() {
+	char str[20];
+	cout << "input :" << endl;
+	while (cin >> str) {
+		if (str != NULL) {
+			cout << "ret = " << LongestPalindrom(str) << endl;
+		} else
+			cout << "redo " << endl;
+	}
+}
+/*
+ * 问题六：字符串的全排列
+ *输入一个字符串，打印出该字符串中字符的所有排列。
+ *例如输入字符串abc，则输出由字符a、b、c 所能排列出来的所有字符串
+ *abc、acb、bac、bca、cab 和 cba
+ */
+/*
+ * 从集合中依次选出每一个元素，作为排列的第一个元素，
+ * 然后对剩余的元素进行全排列，如此递归处理，从而得到所有元素的全排列
+ * O(n!)
+ */
+void CalcAllPermutation(char* perm, int from, int to) {
+	if (to <= 1) {
+		return;
+	}
+	if (from == to) {
+		for (int i = 0; i <= to; i++)
+			cout << perm[i];
+		cout << endl;
+	} else {
+		for (int j = from; j <= to; j++) {
+			swap(perm[j], perm[from]);
+			CalcAllPermutation(perm, from + 1, to);
+			swap(perm[j], perm[from]);
+		}
+	}
+}
+void StrSolveTest_6() {
+	char str[] = "abc";
+	CalcAllPermutation(str, 0, strlen(str) - 1);
+}
